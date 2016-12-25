@@ -1,0 +1,46 @@
+dist: trusty
+language: rust
+rust: nightly
+services: docker
+sudo: required
+
+matrix:
+  include:
+    - env: TARGET=aarch64-unknown-linux-gnu
+    - env: TARGET=armv7-unknown-linux-gnueabihf
+    - env: TARGET=i686-unknown-linux-gnu
+    - env: TARGET=mips-unknown-linux-gnu
+    - env: TARGET=mips64-unknown-linux-gnuabi64
+    - env: TARGET=mips64el-unknown-linux-gnuabi64
+    - env: TARGET=mipsel-unknown-linux-gnu
+    - env: TARGET=powerpc-unknown-linux-gnu
+    - env: TARGET=powerpc64-unknown-linux-gnu
+    - env: TARGET=powerpc64le-unknown-linux-gnu
+    - env: TARGET=s390x-unknown-linux-gnu
+env: TARGET=x86_64-unknown-linux-gnu
+
+install:
+  # install rustup
+  - curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $TRAVIS_RUST_VERSION
+  - source ~/.cargo/env
+
+  # register QEMU interpreters
+  - docker run --privileged --rm -it ubuntu:16.04 sh -c
+    "apt-get update && apt-get install --no-install-recommends -y binfmt-support qemu-user-static"
+
+  # install `cross`
+  - cargo install --git https://github.com/japaric/cross
+
+script:
+  # generate lock files (`cross` can't do this)
+  - cargo generate-lockfile
+  - cross build --target $TARGET
+  - cross test --target $TARGET
+
+branches:
+  only:
+    - master
+
+notifications:
+  email:
+    on_success: never
