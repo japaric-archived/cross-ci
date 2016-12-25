@@ -36,7 +36,8 @@ script:
   # - cargo generate-lockfile
   - cross build --target $TARGET
   - cross test --target $TARGET
-  - cross run --target $TARGET
+  # FIXME(japaric/cross#1)
+  # - cross run --target $TARGET
 
 branches:
   only:
