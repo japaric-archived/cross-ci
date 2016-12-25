@@ -32,10 +32,11 @@ install:
   - cargo install --git https://github.com/japaric/cross
 
 script:
-  # generate lock files (`cross` can't do this)
-  - cargo generate-lockfile
+  # if this is a library, generate the .lock file (`cross` can't do this)
+  # - cargo generate-lockfile
   - cross build --target $TARGET
   - cross test --target $TARGET
+  - cross run --target $TARGET
 
 branches:
   only:
