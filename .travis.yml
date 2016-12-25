@@ -35,8 +35,9 @@ script:
   # if this is a library, generate the .lock file (`cross` can't do this)
   # - cargo generate-lockfile
   - cross build --target $TARGET
-  - cross test --target $TARGET
-  # FIXME(japaric/cross#1)
+  # NOTE the test command doesn't work for the s390x target
+  - test $TARGET = s390x-unknown-linux-gnu || cross test --target $TARGET
+  # FIXME(japaric/cross#2)
   # - cross run --target $TARGET
 
 branches:
